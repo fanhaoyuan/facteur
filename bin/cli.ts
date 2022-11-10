@@ -1,11 +1,7 @@
 import { Command } from 'commander';
-import { name, version } from '../package.json';
 import { create, lint, CreateOptions } from '../lib';
 
 const program = new Command();
-
-program.name(name).usage('[command] [options]');
-program.version(version, '-v, --version');
 
 program
     .command('lint <message>')
