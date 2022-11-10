@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es6",
         "module": "commonjs",
         "esModuleInterop": true,
         "strict": true,
         "resolveJsonModule": true,
         "moduleResolution": "node",
-        "noEmit": true,
-        "allowJs": true
+        "allowJs": true,
+        "outDir": "dist",
+        "declaration": true
     },
     "include": ["bin/**/*", "lib/**/*", "__tests__/**/*"],
     "exclude": ["node_modules", "dist"]
