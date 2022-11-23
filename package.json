@@ -35,6 +35,7 @@
     },
     "dependencies": {
         "commander": "^9.4.1",
+        "esbuild": "^0.15.14",
         "fs-extra": "^10.1.0",
         "picocolors": "^1.0.0"
     }
