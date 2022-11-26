@@ -1,6 +1,6 @@
 # facteur
 
-A lightweight tool for generating CHANGELOG.md.
+A lightweight tool for managing CHANGELOG.md.
 
 ## Install
 
@@ -13,6 +13,18 @@ A lightweight tool for generating CHANGELOG.md.
 ```
 
 ## Usage
+
+### lint
+
+```bash
+>$ facteur lint <message>
+```
+
+### create
+
+```bash
+>$ facteur create [options]
+```
 
 ## License
 

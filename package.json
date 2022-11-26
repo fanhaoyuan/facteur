@@ -16,10 +16,10 @@
     },
     "scripts": {
         "build": "rimraf dist && tsc",
-        "eslint": "npx eslint ."
+        "eslint": "npx eslint .",
+        "changelog": "npx ts-node bin/cli.ts create"
     },
     "keywords": [
-        "changlog",
         "CHANGELOG"
     ],
     "author": "Fansy <418536538@qq.com>",
