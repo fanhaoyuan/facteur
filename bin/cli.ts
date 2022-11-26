@@ -1,7 +1,11 @@
 import { Command } from 'commander';
-import { create, lint, CreateOptions } from '../lib';
+import { create, lint, CreateConfig, Config, resolveConfig } from '../lib';
+import glob from 'fast-glob';
+import { getDefaultValue } from '../lib/utils';
 
 const program = new Command();
+
+const configFiles = glob.sync(`${process.cwd()}./facteurrc.(t|j)s`)[0];
 
 program
     .command('lint <message>')
@@ -12,12 +16,17 @@ program
 
 program
     .command('create')
-    .description('create changelog to file')
-    .option('-r, --range <tag...>', 'a range for create changelog')
-    .option('-s, --scope <dir>', 'which scope should record change')
-    .option('-o, --output <path>', 'Output changelog file path')
-    .action(async (options: CreateOptions) => {
-        await create(options);
+    .description('create CHANGELOG from git commits.')
+    .option('-c. --config <path>', 'the path of config file.')
+    .option('-e, --end <commit>', 'generate the end point of the CHANGELOG.')
+    .option('-s, --scope <dir>', 'the directory to generate CHANGELOG.')
+    .option('-o, --output <path>', 'the file path to generate CHANGELOG.')
+    .action(async (userConfig: CreateConfig & Pick<Config, 'config'>) => {
+        const configFile = getDefaultValue(userConfig.config, configFiles);
+
+        const config = await resolveConfig(configFile);
+
+        await create(Object.assign({}, config, userConfig, { config: configFile }));
     });
 
 program.parse();

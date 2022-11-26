@@ -15,3 +15,17 @@ export function run(command: string, ...options: string[]) {
         .map(item => item.trim())
         .filter(Boolean);
 }
+
+/**
+ * Default value factory
+ * @param value
+ * @param defaultValue
+ * @returns
+ */
+export function getDefaultValue<T>(value: T | undefined, defaultValue: T): T {
+    if (typeof value === 'undefined') {
+        return defaultValue;
+    }
+
+    return value;
+}

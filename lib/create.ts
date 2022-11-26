@@ -1,48 +1,68 @@
 import * as path from 'path';
-import { run } from './utils';
+import { run, getDefaultValue } from './utils';
 import picocolors from 'picocolors';
 import * as fs from 'fs-extra';
 import { merge } from './merge';
+import { CreateConfig, Commit } from './interfaces';
 
-export interface Commit {
-    message: string;
-    hash: string;
+function getHash(commit: string) {
+    return run('git', 'rev-list', '-n', '1', commit)[0] || '';
 }
 
-export interface CreateOptions {
-    range?: string[];
-    scope?: string;
-    formatter?: (commit: Commit) => Commit;
-    /**
-     * @default
-     * 'CHANGELOG.md'
-     */
-    output?: string;
+function getFirstCommit() {
+    const commits = run('git', 'rev-list', '--all');
+    return commits[commits.length - 1];
 }
 
-function getHash(tag: string) {
-    const [hash] = run('git', 'rev-list', '-n', '1', tag);
-    return hash;
+function getCommitsInRange(start: string, end: string, scope: string) {
+    return run('git', '--no-pager', 'log', `${end}...${start}`, '--oneline', scope);
 }
 
-function getLastTag() {
-    const [tag = ''] = run('git', 'tag', '-l');
-    return tag;
+function getTagList() {
+    const refs = run('git', '--no-pager', 'log', '--oneline', '--format=%D');
+
+    return refs
+        .map(item => {
+            return (
+                item
+                    .split(',')
+                    .map(_ => _.trim())
+                    .filter(_ => _.startsWith('tag:'))[0] || ''
+            ).slice(5);
+        })
+        .filter(Boolean);
 }
 
-export async function create(options: CreateOptions = {}) {
-    const { range = [], scope = '.', formatter, output = 'CHANGELOG.md' } = options;
+function getTagByCommit(commit: string) {
+    return run('git', 'tag', '-l', '--contains', commit)[0];
+}
 
-    const [start = getLastTag(), end = 'HEAD'] = range;
+/**
+ * Create CHANGELOG form commit messages.
+ * @param config
+ * @returns
+ */
+export async function create(config: CreateConfig = {}) {
+    const start = getHash('HEAD');
+
+    const [firstTag, secondTag] = getTagList();
+
+    const startTag = getTagByCommit(start);
+    const firstCommit = getFirstCommit();
+
+    const end = getHash(
+        getDefaultValue(config.end, (startTag ? (secondTag ? secondTag : firstCommit) : firstTag) || firstCommit)
+    );
+    const title = startTag || 'Up to date';
 
     if (!start) {
         console.log(picocolors.red('[facteur]: Range is invalid. Must provide start tag or exist a tag in repo.'));
         process.exit(1);
     }
 
-    const hashRange = [getHash(start), getHash(end)];
+    const scope = getDefaultValue(config.scope, '.');
 
-    let commits: Commit[] = run('git', '--no-pager', 'log', hashRange.join('...'), '--oneline', scope).map(msg => {
+    let commits: Commit[] = getCommitsInRange(start, end, scope).map(msg => {
         const message = msg.slice(8);
         const hash = msg.slice(0, 7);
 
@@ -52,9 +72,9 @@ export async function create(options: CreateOptions = {}) {
         };
     });
 
-    if (formatter) {
-        commits = commits.map(commit => formatter(commit));
-    }
+    const formatter = getDefaultValue(config.formatter, commit => commit);
+
+    commits = commits.map(commit => formatter(commit));
 
     if (!commits.length) {
         console.log(picocolors.yellow('[facteur]: This repo has not changed.'));
@@ -63,11 +83,13 @@ export async function create(options: CreateOptions = {}) {
 
     console.log(picocolors.cyan('[facteur]: Creating changelog...'));
 
-    let log = `## ${end}\n\n`;
+    let log = `## ${title}\n\n`;
 
     for (const commit of commits) {
         log += `- ${commit.message}\n`;
     }
+
+    const output = getDefaultValue(config.output, 'CHANGELOG.md');
 
     const dest = path.resolve(process.cwd(), scope, output);
 
