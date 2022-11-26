@@ -5,7 +5,7 @@ import { getDefaultValue } from '../lib/utils';
 
 const program = new Command();
 
-const configFiles = glob.sync(`${process.cwd()}./facteurrc.(t|j)s`)[0];
+const defaultConfigFile = glob.sync(`${process.cwd()}/.facteurrc.(t|j)s`)[0];
 
 program
     .command('lint <message>')
@@ -22,7 +22,7 @@ program
     .option('-s, --scope <dir>', 'the directory to generate CHANGELOG.')
     .option('-o, --output <path>', 'the file path to generate CHANGELOG.')
     .action(async (userConfig: CreateConfig & Pick<Config, 'config'>) => {
-        const configFile = getDefaultValue(userConfig.config, configFiles);
+        const configFile = getDefaultValue(userConfig.config, defaultConfigFile);
 
         const config = await resolveConfig(configFile);
 
