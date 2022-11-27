@@ -53,14 +53,27 @@ export async function create(config: CreateConfig = {}) {
     const end = getHash(
         getDefaultValue(config.end, (startTag ? (secondTag ? secondTag : firstCommit) : firstTag) || firstCommit)
     );
-    const title = startTag || 'Up to date';
+
+    const scope = getDefaultValue(config.scope, '.');
+
+    const root = path.resolve(process.cwd(), scope);
+
+    const version = `v${fs.readJSONSync(path.resolve(root, 'package.json')).version}`;
+
+    const output = getDefaultValue(config.output, 'CHANGELOG.md');
+
+    const dest = path.resolve(root, output);
+
+    const originChangelog = fs.pathExistsSync(dest) ? fs.readFileSync(dest, 'utf-8') : '';
+
+    const isVersionTitleExist = new RegExp(`## ${version}`).test(originChangelog);
+
+    const title = getDefaultValue(config.title, startTag) || (!isVersionTitleExist ? version : 'Next');
 
     if (!start) {
         console.log(picocolors.red('[facteur]: Range is invalid. Must provide start tag or exist a tag in repo.'));
         process.exit(1);
     }
-
-    const scope = getDefaultValue(config.scope, '.');
 
     let commits: Commit[] = getCommitsInRange(start, end, scope).map(msg => {
         const message = msg.slice(8);
@@ -89,12 +102,7 @@ export async function create(config: CreateConfig = {}) {
         log += `- ${commit.message}\n`;
     }
 
-    const output = getDefaultValue(config.output, 'CHANGELOG.md');
-
-    const dest = path.resolve(process.cwd(), scope, output);
-
-    if (fs.pathExistsSync(dest)) {
-        const originChangelog = fs.readFileSync(dest, 'utf-8');
+    if (originChangelog) {
         log = merge(originChangelog, log);
     }
 
