@@ -4,6 +4,10 @@ export interface Commit {
 }
 
 export interface CreateConfig {
+    /**
+     * Create title of CHANGELOG group
+     */
+    title?: string;
     end?: string;
     scope?: string;
     formatter?: (commit: Commit) => Commit;

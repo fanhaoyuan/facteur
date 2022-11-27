@@ -15,18 +15,18 @@ program
     });
 
 program
-    .command('create')
+    .command('create [title]')
     .description('create CHANGELOG from git commits.')
     .option('-c. --config <path>', 'the path of config file.')
     .option('-e, --end <commit>', 'generate the end point of the CHANGELOG.')
     .option('-s, --scope <dir>', 'the directory to generate CHANGELOG.')
     .option('-o, --output <path>', 'the file path to generate CHANGELOG.')
-    .action(async (userConfig: CreateConfig & Pick<Config, 'config'>) => {
+    .action(async (title?: string, userConfig: CreateConfig & Pick<Config, 'config'> = {}) => {
         const configFile = getDefaultValue(userConfig.config, defaultConfigFile);
 
         const config = await resolveConfig(configFile);
 
-        await create(Object.assign({}, config, userConfig, { config: configFile }));
+        await create(Object.assign({}, config, userConfig, { config: configFile, title }));
     });
 
 program.parse();
