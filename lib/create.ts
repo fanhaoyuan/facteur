@@ -76,11 +76,12 @@ export async function create(config: CreateConfig = {}) {
     }
 
     let commits: Commit[] = getCommitsInRange(start, end, scope).map(msg => {
-        const message = msg.slice(8);
+        const [type, ...message] = msg.slice(8).split(':');
         const hash = msg.slice(0, 7);
 
         return {
-            message,
+            type,
+            message: message.join(':').trim(),
             hash,
         };
     });
