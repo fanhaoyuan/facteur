@@ -1,3 +1,9 @@
+## v0.2.0
+
+-   🚀 provide commit type from commit msg in formatter ([#9](https://github.com/fanhaoyuan/facteur/pull/9))
+-   🚀 allows filter commit messages by return `null` or `false` in formatter ([#8](https://github.com/fanhaoyuan/facteur/pull/8))
+-   🚀 add create title in cli and default title ([#7](https://github.com/fanhaoyuan/facteur/pull/7))
+
 ## v0.1.0
 
 -   🚀 feat: updated the method of creating the CHANGELOG ([#4](https://github.com/fanhaoyuan/facteur/pull/4))
