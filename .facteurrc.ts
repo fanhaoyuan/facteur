@@ -12,11 +12,11 @@ export default defineConfig({
             message = message += ` ([${commit.hash}](https://github.com/fanhaoyuan/facteur/commit/${commit.hash}))`;
         }
 
-        if (message.startsWith('feat:')) {
+        if (commit.type === 'feat') {
             message = `🚀 ${message}`;
         }
 
-        if (message.startsWith('fix:')) {
+        if (commit.type === 'fix') {
             message = `🐛 ${message}`;
         }
 

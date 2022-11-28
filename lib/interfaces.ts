@@ -1,6 +1,7 @@
 export interface Commit {
     message: string;
     hash: string;
+    type: string;
 }
 
 export interface CreateConfig {
