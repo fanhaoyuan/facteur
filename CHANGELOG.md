@@ -1,3 +1,8 @@
+## v0.2.1
+
+-   🐛 fix import entry and types entry error ([#11](https://github.com/fanhaoyuan/facteur/pull/11))
+-   🔧 use `config-extracter` instead of `resolve-config` ([#10](https://github.com/fanhaoyuan/facteur/pull/10))
+
 ## v0.2.0
 
 -   🚀 provide commit type from commit msg in formatter ([#9](https://github.com/fanhaoyuan/facteur/pull/9))

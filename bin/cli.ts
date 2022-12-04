@@ -26,8 +26,6 @@ program
                 file: userConfig.config || defaultConfigFiles,
             })) || {};
 
-            console.log(config);
-
         await create(Object.assign({}, config, userConfig, { title }));
     });
 

@@ -20,6 +20,10 @@ export default defineConfig({
             message = `🐛 ${message}`;
         }
 
+        if (commit.type === 'refactor') {
+            message = `🔧 ${message}`;
+        }
+
         return {
             ...commit,
             message,
