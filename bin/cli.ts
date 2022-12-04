@@ -1,11 +1,10 @@
 import { Command } from 'commander';
-import { create, lint, CreateConfig, Config, resolveConfig } from '../lib';
-import glob from 'fast-glob';
-import { getDefaultValue } from '../lib/utils';
+import { create, lint, CreateConfig, Config } from '../lib';
+import { extract } from 'config-extracter';
 
 const program = new Command();
 
-const defaultConfigFile = glob.sync(`${process.cwd()}/.facteurrc.(t|j)s`)[0];
+const defaultConfigFiles = ['.ts', '.js'].map(ext => `${process.cwd()}/.facteurrc${ext}`);
 
 program
     .command('lint <message>')
@@ -22,11 +21,14 @@ program
     .option('-s, --scope <dir>', 'the directory to generate CHANGELOG.')
     .option('-o, --output <path>', 'the file path to generate CHANGELOG.')
     .action(async (title?: string, userConfig: CreateConfig & Pick<Config, 'config'> = {}) => {
-        const configFile = getDefaultValue(userConfig.config, defaultConfigFile);
+        const config =
+            (await extract<Config>({
+                file: userConfig.config || defaultConfigFiles,
+            })) || {};
 
-        const config = await resolveConfig(configFile);
+            console.log(config);
 
-        await create(Object.assign({}, config, userConfig, { config: configFile, title }));
+        await create(Object.assign({}, config, userConfig, { title }));
     });
 
 program.parse();
