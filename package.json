@@ -36,8 +36,8 @@
     },
     "dependencies": {
         "commander": "^9.4.1",
+        "config-extracter": "^0.1.0",
         "esbuild": "^0.15.14",
-        "fast-glob": "^3.2.12",
         "fs-extra": "^10.1.0",
         "picocolors": "^1.0.0"
     }
