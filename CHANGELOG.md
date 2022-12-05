@@ -1,3 +1,8 @@
+## v0.3.0
+
+- 🚀 supports custom lint types ([#13](https://github.com/fanhaoyuan/facteur/pull/13))
+- 🚀 supports string formatter ([#12](https://github.com/fanhaoyuan/facteur/pull/12))
+
 ## v0.2.1
 
 -   🐛 fix import entry and types entry error ([#11](https://github.com/fanhaoyuan/facteur/pull/11))
