@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { create, lint, CreateConfig, Config } from '../lib';
+import { create, lint, CreateConfig, Config, LintConfig } from '../lib';
 import { extract } from 'config-extracter';
 
 const program = new Command();
@@ -9,8 +9,14 @@ const defaultConfigFiles = ['.ts', '.js'].map(ext => `${process.cwd()}/.facteurr
 program
     .command('lint <message>')
     .description('lint commit message format')
-    .action((message: string) => {
-        lint(message);
+    .option('-c. --config <path>', 'the path of config file.')
+    .action(async (message: string, userConfig: LintConfig & Pick<Config, 'config'>) => {
+        const config =
+            (await extract<Config>({
+                file: userConfig.config || defaultConfigFiles,
+            })) || {};
+
+        lint(message, config);
     });
 
 program
