@@ -88,7 +88,18 @@ export async function create(config: CreateConfig = {}) {
 
     const formatter = getDefaultValue(config.formatter, commit => commit);
 
-    commits = commits.map(commit => formatter(commit)).filter((commit): commit is Commit => !!commit);
+    commits = commits
+        .map(commit => {
+            const formatted = formatter(commit);
+
+            if (typeof formatted === 'string') {
+                commit.message = formatted;
+                return commit;
+            }
+
+            return formatted;
+        })
+        .filter((commit): commit is Commit => !!commit);
 
     if (!commits.length) {
         console.log(picocolors.yellow('[facteur]: This repo has not changed.'));

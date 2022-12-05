@@ -5,7 +5,7 @@ export default defineConfig({
         let message = commit.message;
 
         if (/#\d/.test(message)) {
-            message = message.replace(/#\d/, title => {
+            message = message.replace(/#\d+/g, title => {
                 return `[${title}](https://github.com/fanhaoyuan/facteur/pull/${title.slice(1)})`;
             });
         } else {
@@ -13,20 +13,17 @@ export default defineConfig({
         }
 
         if (commit.type === 'feat') {
-            message = `🚀 ${message}`;
+            return `🚀 ${message}`;
         }
 
         if (commit.type === 'fix') {
-            message = `🐛 ${message}`;
+            return `🐛 ${message}`;
         }
 
         if (commit.type === 'refactor') {
-            message = `🔧 ${message}`;
+            return `🔧 ${message}`;
         }
 
-        return {
-            ...commit,
-            message,
-        };
+        return false;
     },
 });

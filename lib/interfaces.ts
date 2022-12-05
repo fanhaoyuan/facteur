@@ -11,7 +11,7 @@ export interface CreateConfig {
     title?: string;
     end?: string;
     scope?: string;
-    formatter?: (commit: Commit) => Commit | false | null;
+    formatter?: (commit: Commit) => Commit | false | null | string;
     /**
      * @default
      * 'CHANGELOG.md'
